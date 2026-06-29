@@ -435,11 +435,9 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
                 <span className="btn-bet-label" id="betLabel">BET {bet}</span>
                 <button className="btn btn-sm" id="betUpBtn" onClick={() => changeBet(1)} disabled={spinning}>+</button>
                 <button className="btn btn-sm" id="betMaxBtn" onClick={setBetMax} disabled={spinning}>»</button>
-                <div style={{width:'8px'}}></div>
                 <button className="btn btn-spin" id="spinBtn" onClick={doSpin} disabled={spinning}>
                   {spinning ? 'SPINNING...' : freeSpins > 0 ? 'FREE SPIN' : 'SPIN'}
                 </button>
-                <div style={{width:'8px'}}></div>
                 <button className={`btn btn-info ${soundOn ? '' : 'muted'}`} onClick={() => { if (soundOnRef.current) playButton(); toggleSound(); }} style={{minWidth:'40px'}}>♪</button>
                 <button className="btn btn-info" id="paytableBtn" onClick={() => { if (soundOnRef.current) playButton(); setShowPaytable(true); }}>i</button>
               </div>

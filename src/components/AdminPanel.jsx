@@ -63,7 +63,7 @@ export default function AdminPanel({ onClose }) {
         ) : null}
 
         {tab === 'deposits' && data.deposits.map((d, i) => (
-          <div key={i} style={{ background: '#1e293b', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div key={i} style={{ background: '#1e293b', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
             <div>
               <strong style={{ color: '#e2e8f0', fontSize: '13px' }}>{d.profiles?.username || 'Unknown'}</strong>
               <div style={{ color: '#94a3b8', fontSize: '11px', marginTop: '2px' }}>
@@ -85,7 +85,7 @@ export default function AdminPanel({ onClose }) {
         ))}
 
         {tab === 'withdrawals' && data.withdrawals.map((w, i) => (
-          <div key={i} style={{ background: '#1e293b', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div key={i} style={{ background: '#1e293b', borderRadius: '8px', padding: '12px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
             <div>
               <strong style={{ color: '#e2e8f0', fontSize: '13px' }}>{w.profiles?.username || 'Unknown'}</strong>
               <div style={{ color: '#94a3b8', fontSize: '11px', marginTop: '2px' }}>
@@ -107,7 +107,8 @@ export default function AdminPanel({ onClose }) {
         ))}
 
         {tab === 'users' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div style={{ overflowX: 'auto' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '500px' }}>
             <div style={{ display: 'flex', padding: '8px 12px', color: '#64748b', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>
               <span style={{ flex: 2 }}>Username</span>
               <span style={{ flex: 2 }}>Email</span>
@@ -152,6 +153,7 @@ export default function AdminPanel({ onClose }) {
                 </span>
               </div>
             ))}
+          </div>
           </div>
         )}
       </div>

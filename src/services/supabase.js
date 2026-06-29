@@ -29,23 +29,30 @@ export function initSupabase(url, key) {
   } catch (e) { console.error('Supabase init error:', e); return false; }
 }
 
+async function fetchMyProfile(userId) {
+  try {
+    const { data, error } = await supabaseClient.rpc('get_my_profile');
+    if (!error && data) {
+      const p = Array.isArray(data) ? data[0] : data;
+      if (p) return p;
+    }
+  } catch (e) { /* fall through */ }
+  if (userId) {
+    try {
+      const { data } = await supabaseClient.from('profiles').select('*').eq('id', userId).maybeSingle();
+      if (data) return data;
+    } catch (e) { /* ignore */ }
+  }
+  return null;
+}
+
 export async function restoreSession() {
   if (!supabaseClient) return;
   try {
     const { data: { session }, error } = await supabaseClient.auth.getSession();
     if (error) throw error;
     if (session) {
-      let profile = null;
-      try {
-        const { data, error } = await supabaseClient.rpc('get_my_profile');
-        if (!error && data) profile = data;
-      } catch (e) { /* fall through */ }
-      if (!profile) {
-        try {
-          const { data } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).single();
-          profile = data;
-        } catch (e) { /* ignore */ }
-      }
+      const profile = await fetchMyProfile(session.user.id);
       return { user: session.user, profile };
     }
   } catch (e) { console.error('Session restore error:', e); }
@@ -78,17 +85,7 @@ export async function loginUser(email, password) {
   try {
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) return { error: error.message };
-    let profile = null;
-    try {
-      const { data, error: rpcErr } = await supabaseClient.rpc('get_my_profile');
-      if (!rpcErr && data) profile = data;
-    } catch (e) { /* fall through */ }
-    if (!profile) {
-      try {
-        const { data } = await supabaseClient.from('profiles').select('*').eq('id', data.user.id).single();
-        profile = data;
-      } catch (e) { /* ignore */ }
-    }
+    const profile = await fetchMyProfile(data.user.id);
     return { data, profile };
   } catch (e) { return { error: e.message }; }
 }
@@ -109,16 +106,7 @@ export async function syncBalance(balance) {
 
 export async function getProfile(userId) {
   if (!supabaseClient || !userId) return null;
-  try {
-    const { data, error } = await supabaseClient
-      .rpc('get_my_profile');
-    if (!error && data) return data;
-  } catch (e) { /* fall through */ }
-  try {
-    const { data } = await supabaseClient
-      .from('profiles').select('*').eq('id', userId).single();
-    return data || null;
-  } catch (e) { return null; }
+  return fetchMyProfile(userId);
 }
 
 export async function submitDeposit(userId, currency, amount, txHash) {
@@ -146,15 +134,10 @@ export async function submitWithdrawal(userId, currency, amount, walletAddress) 
 export async function getTransactions(userId) {
   if (!supabaseClient || !userId) return { deposits: [], withdrawals: [] };
   try {
-    const [depositsRes, withdrawalsRes] = await Promise.all([
-      supabaseClient.from('deposits').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(20),
-      supabaseClient.from('withdrawals').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(20)
-    ]);
-    return {
-      deposits: depositsRes.data || [],
-      withdrawals: withdrawalsRes.data || []
-    };
-  } catch (e) { return { deposits: [], withdrawals: [] }; }
+    const { data, error } = await supabaseClient.rpc('get_my_transactions');
+    if (!error && data) return data;
+  } catch (e) { /* fall through */ }
+  return { deposits: [], withdrawals: [] };
 }
 
 export async function getAdminData() {
@@ -162,30 +145,14 @@ export async function getAdminData() {
   try {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) return { deposits: [], withdrawals: [], users: [] };
-    let isAdmin = false;
-    try {
-      const { data: profile, error: profileError } = await supabaseClient.rpc('get_my_profile');
-      if (!profileError && profile?.is_admin) isAdmin = true;
-    } catch (e) { /* fall through */ }
-    if (!isAdmin) {
-      try {
-        const { data: p } = await supabaseClient.from('profiles').select('is_admin').eq('id', session.user.id).single();
-        if (p?.is_admin) isAdmin = true;
-      } catch (e) { /* ignore */ }
-    }
+    const profile = await fetchMyProfile(session.user.id);
+    const isAdmin = profile?.is_admin === true;
     if (!isAdmin) return { deposits: [], withdrawals: [], users: [] };
 
-    const [depRes, withRes, usersRes] = await Promise.all([
-      supabaseClient.from('deposits').select('*, profiles(username)').eq('status', 'pending').order('created_at', { ascending: false }),
-      supabaseClient.from('withdrawals').select('*, profiles(username)').eq('status', 'pending').order('created_at', { ascending: false }),
-      supabaseClient.from('profiles').select('*').order('created_at', { ascending: false })
-    ]);
-    return {
-      deposits: depRes.data || [],
-      withdrawals: withRes.data || [],
-      users: usersRes.data || []
-    };
-  } catch (e) { return { deposits: [], withdrawals: [], users: [] }; }
+    const { data, error } = await supabaseClient.rpc('get_admin_data');
+    if (!error && data) return data;
+  } catch (e) { /* ignore */ }
+  return { deposits: [], withdrawals: [], users: [] };
 }
 
 export async function approveTransaction(type, id) {
@@ -194,11 +161,16 @@ export async function approveTransaction(type, id) {
     const { data: txData } = await supabaseClient.from(type + 's').select('user_id, amount').eq('id', id).single();
     if (!txData) return;
     await supabaseClient.from(type + 's').update({ status: 'approved' }).eq('id', id);
-    const { data: prof } = await supabaseClient.rpc('get_my_profile');
-    if (prof || (prof = (await supabaseClient.from('profiles').select('balance').eq('id', txData.user_id).single()).data)) {
-      const newBal = type === 'deposit'
-        ? parseFloat(prof.balance) + parseFloat(txData.amount)
-        : Math.max(0, parseFloat(prof.balance) - parseFloat(txData.amount));
+    let newBal = 0;
+    try {
+      const { data: prof } = await supabaseClient.from('profiles').select('balance').eq('id', txData.user_id).single();
+      if (prof) {
+        newBal = type === 'deposit'
+          ? parseFloat(prof.balance) + parseFloat(txData.amount)
+          : Math.max(0, parseFloat(prof.balance) - parseFloat(txData.amount));
+      }
+    } catch (e) { /* ignore */ }
+    if (newBal > 0) {
       await supabaseClient.rpc('update_balance', { user_id: txData.user_id, new_balance: newBal });
     }
   } catch (e) { /* ignore */ }
