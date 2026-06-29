@@ -242,26 +242,91 @@ body{
   .sidebar-nav .nav-label{display:none}
   .sidebar-nav a{padding:10px;justify-content:center}
   .sidebar-nav a i{font-size:20px;width:auto}
-  .sidebar-foot a span{display:none}
-  .sidebar-foot a{justify-content:center;padding:10px}
+  .sidebar-nav .sidebar-action span{display:none}
+  .sidebar-nav .sidebar-action{justify-content:center;padding:10px}
+  .sidebar-nav .sidebar-action i{font-size:20px;width:auto}
+  .sidebar-foot button span{display:none}
+  .sidebar-foot button{justify-content:center;padding:10px}
   .main-area{margin-left:60px}
   .site-header .h-left .menu-btn{display:block}
   .content-wrap{padding:16px}
   .game-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
   .featured-wrap{padding:12px 12px 4px}
+  .sidebar.mobile-open{width:220px;min-width:220px;z-index:60}
+  .sidebar.mobile-open .sidebar-logo{justify-content:flex-start;padding:18px 16px}
+  .sidebar.mobile-open .sidebar-logo .logo-text{display:flex}
+  .sidebar.mobile-open .sidebar-nav a{justify-content:flex-start;padding:10px 14px}
+  .sidebar.mobile-open .sidebar-nav a span{display:inline}
+  .sidebar.mobile-open .sidebar-nav a i{font-size:18px;width:20px}
+  .sidebar.mobile-open .sidebar-nav .nav-label{display:block}
+  .sidebar.mobile-open .sidebar-nav .sidebar-action{justify-content:flex-start;padding:10px 14px}
+  .sidebar.mobile-open .sidebar-nav .sidebar-action span{display:inline}
+  .sidebar.mobile-open .sidebar-nav .sidebar-action i{font-size:18px;width:20px}
+  .sidebar.mobile-open .sidebar-foot button{justify-content:flex-start;padding:10px 14px}
+  .sidebar.mobile-open .sidebar-foot button span{display:inline}
 }
-@media(max-width:480px){
+@media(max-width:600px){
   .site-header{padding:10px 12px;flex-wrap:wrap;gap:6px}
   .site-header .h-right{gap:6px}
   .site-header .h-user{padding:3px 8px 3px 3px;font-size:11px}
   .site-header .h-user .avatar{width:22px;height:22px;font-size:9px}
   .site-header .h-balance{font-size:11px;padding:3px 8px 3px 6px}
+  .site-header .auth-btn{font-size:11px;padding:0 10px;height:30px}
+  .site-header .bell-btn{width:30px;height:30px;font-size:14px}
+  .site-header .setting-btn{width:26px;height:26px}
+  .site-header .h-left .bread{font-size:11px}
   .content-wrap{padding:12px}
   .game-grid{grid-template-columns:repeat(2,1fr);gap:10px}
   .game-card .info{padding:8px 10px}
   .game-card .info .name{font-size:12px}
   .game-card .info .provider{font-size:10px}
+  .game-card .thumb .icon-wrap{font-size:32px}
   .featured-wrap{padding:10px 8px 4px;margin-bottom:20px}
+  .top-bar .stat-badge{font-size:10px;padding:4px 10px}
+  .top-bar .search-wrap input{font-size:12px;padding:7px 10px 7px 32px}
+  .top-bar .search-wrap i{left:10px;font-size:14px}
+  .live-bets-wrap table{font-size:11px}
+  .live-bets-wrap th{padding:8px 10px;font-size:10px}
+  .live-bets-wrap td{padding:8px 10px}
+  .live-bets-wrap .lb-header{padding:12px 14px;flex-wrap:wrap;gap:6px}
+  .live-bets-wrap .lb-header h3{font-size:14px}
+}
+@media(max-width:480px){
+  .content-wrap{padding:10px}
+  .game-grid{gap:8px}
+  .game-card{border-radius:10px}
+  .game-card .thumb{border-radius:10px 10px 0 0}
+  .game-card .thumb .play-icon{width:40px;height:40px;font-size:18px}
+  .game-card .info .name{font-size:11px}
+  .game-card .badge{font-size:8px;padding:3px 8px;top:6px;left:6px}
+  .game-type-tab{padding:5px 12px;font-size:11px}
+  .last-wins-wrap{padding:6px 10px}
+  .last-wins-wrap .lw-item{font-size:11px;gap:6px}
+  .load-more-wrap .load-btn{padding:8px 20px;font-size:12px}
+  .modal-overlay .modal{padding:16px 14px;width:96%}
+  .modal-overlay .modal h2{font-size:16px}
+}
+@media(max-width:360px){
+  .site-header{padding:8px 8px;gap:4px}
+  .site-header .h-right{gap:4px}
+  .site-header .h-user{font-size:10px;padding:2px 6px 2px 2px}
+  .site-header .h-user .avatar{width:18px;height:18px;font-size:8px}
+  .site-header .h-balance{font-size:10px;padding:2px 6px}
+  .site-header .auth-btn{font-size:10px;padding:0 8px;height:26px}
+  .site-header .bell-btn{width:26px;height:26px;font-size:12px}
+  .site-header .setting-btn{width:22px;height:22px;font-size:13px}
+  .site-header .h-left .bread{font-size:10px}
+  .content-wrap{padding:8px}
+  .game-grid{gap:6px}
+  .game-card .info{padding:6px 8px}
+  .game-card .info .name{font-size:10px}
+  .game-card .info .provider{font-size:9px}
+  .game-card .thumb .icon-wrap{font-size:26px}
+  .game-card .badge{font-size:7px;padding:2px 6px}
+  .featured-wrap{padding:6px 4px 2px}
+  .top-bar .stat-badge{display:none}
+  .last-wins-wrap .lw-item .user{display:none}
+  .live-bets-wrap td:nth-child(3),.live-bets-wrap th:nth-child(3){display:none}
 }
 
 /* ===== BUFFALO SLOT STYLES (UNTOUCHED) ===== */
@@ -351,6 +416,7 @@ body{
 .buffalo-slot-wrap .btn-info{background:linear-gradient(180deg,#2a2a3a,#1a1a2a);color:#8a8aaa;font-size:18px;padding:8px 14px;border-radius:10px;box-shadow:0 3px 0 #0a0a14,0 4px 10px rgba(0,0,0,0.3);border:1px solid #3a3a5a;min-width:40px;font-weight:800}
 .buffalo-slot-wrap .btn-info:hover{background:linear-gradient(180deg,#3a3a4a,#2a2a3a)}
 .buffalo-slot-wrap .btn-info:active{box-shadow:0 1px 0 #0a0a14;margin-top:2px}
+.buffalo-slot-wrap .btn-info.muted{opacity:0.5;background:linear-gradient(180deg,#1a1a2a,#0a0a1a);color:#666;text-decoration:line-through}
 .buffalo-slot-wrap .btn-bet-label{color:#8a7a6a;font-size:clamp(11px,1.5vw,13px);font-weight:600;padding:0 4px}
 .buffalo-slot-wrap .msg-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:20}
 .buffalo-slot-wrap .msg-box{background:linear-gradient(135deg,rgba(10,5,2,0.92),rgba(20,10,4,0.92));border:2px solid #ffd700;border-radius:18px;padding:18px 36px;text-align:center;opacity:0;transform:scale(0.8) translateY(10px);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;box-shadow:0 0 60px rgba(255,215,0,0.1)}
@@ -403,16 +469,23 @@ body{
   .buffalo-slot-wrap .top-sign h1{letter-spacing:6px}
   .buffalo-slot-wrap .modal{padding:14px 16px}
 }
-@media(max-width:400px){
-  .buffalo-slot-wrap .machine-inner{padding:6px 8px 6px}
-  .buffalo-slot-wrap .reel-window-inner{padding:4px}
-  .buffalo-slot-wrap .reels{gap:2px}.buffalo-slot-wrap .reel{gap:2px}
-  .buffalo-slot-wrap .symbol-cell{border-radius:4px}
-  .buffalo-slot-wrap .symbol-cell .sym svg{width:20px;height:20px}
-  .buffalo-slot-wrap .btn-spin{padding:8px 16px;font-size:12px;min-width:70px}
-  .buffalo-slot-wrap .btn-sm{padding:4px 8px;font-size:14px;min-width:28px}
-  .buffalo-slot-wrap .display-box .value{font-size:14px}
-  .buffalo-slot-wrap .top-sign h1{font-size:20px;letter-spacing:4px}
+@media(max-width:450px){
+  .buffalo-slot-wrap .machine-inner{padding:8px 10px 8px}
+  .buffalo-slot-wrap .reel-window-inner{padding:5px}
+  .buffalo-slot-wrap .reels{gap:3px}.buffalo-slot-wrap .reel{gap:2px}
+  .buffalo-slot-wrap .symbol-cell{border-radius:6px}
+  .buffalo-slot-wrap .symbol-cell .sym svg{width:clamp(16px,4vw,28px);height:clamp(16px,4vw,28px)}
+  .buffalo-slot-wrap .btn-spin{padding:9px 18px;font-size:13px;min-width:80px}
+  .buffalo-slot-wrap .btn-sm{padding:5px 10px;font-size:16px;min-width:32px}
+  .buffalo-slot-wrap .display-box .value{font-size:clamp(14px,3.5vw,18px)}
+  .buffalo-slot-wrap .top-sign h1{font-size:clamp(18px,5vw,24px);letter-spacing:4px}
+  .buffalo-slot-wrap .top-sign .subtitle{font-size:8px;letter-spacing:4px}
+  .buffalo-slot-wrap .panel{padding:8px 8px}
+  .buffalo-slot-wrap .displays{gap:4px}
+  .buffalo-slot-wrap .display-box{padding:3px 6px}
+  .buffalo-slot-wrap .display-box .label{font-size:8px}
+  .buffalo-slot-wrap .btn-row{gap:5px}
+  .buffalo-slot-wrap .btn-bet-label{font-size:10px}
 }
 
 /* ===== REACT-SPECIFIC ===== */

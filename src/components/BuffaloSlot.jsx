@@ -118,6 +118,9 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
   const [showPaytable, setShowPaytable] = useState(false);
   const [particles, setParticles] = useState([]);
   const [winFloats, setWinFloats] = useState([]);
+  const [soundOn, setSoundOn] = useState(() => {
+    try { return localStorage.getItem('buffalo_sound') !== 'off'; } catch { return true; }
+  });
   const spinRef = useRef(false);
   const reelRefs = useRef([]);
   const humRef = useRef(null);
@@ -125,11 +128,13 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
   const freeSpinsRef = useRef(freeSpins);
   const betRef2 = useRef(bet);
   const extBalanceRef = useRef(extBalance);
+  const soundOnRef = useRef(soundOn);
 
   gridRef.current = grid;
   freeSpinsRef.current = freeSpins;
   betRef2.current = bet;
   extBalanceRef.current = extBalance;
+  soundOnRef.current = soundOn;
 
   useEffect(() => {
     if (currentProfile && currentProfile.balance !== undefined) {
@@ -166,7 +171,7 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
         const k = strip[(pos + r) % strip.length];
         if (cells[r]) cells[r].innerHTML = renderSym(k);
       }
-      if (f < frames - 1) playReelTick();
+      if (f < frames - 1) { if (soundOnRef.current) playReelTick(); }
       await delay(frameDelay);
     }
 
@@ -177,7 +182,7 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
       if (cells[r]) cells[r].innerHTML = renderSym(k);
       result.push(k);
     }
-    playReelStop();
+    if (soundOnRef.current) playReelStop();
     return result;
   };
 
@@ -189,7 +194,7 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
 
     if (curFs === 0 && curBal < curBet) {
       showMessage('NO FUNDS', 'Increase your balance to continue', 2000);
-      playLowFunds();
+      if (soundOnRef.current) playLowFunds();
       return;
     }
 
@@ -201,7 +206,7 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
     setParticles([]);
     setWinFloats([]);
 
-    playSpin();
+    if (soundOnRef.current) playSpin();
 
     const deduct = curFs === 0 ? curBet : 0;
     if (curFs === 0) {
@@ -258,7 +263,7 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
       setFreeSpins(newFs);
       freeSpinsRef.current = newFs;
       showMessage('FREE SPINS!', '8 Free Spins Awarded', 2500);
-      playScatter();
+      if (soundOnRef.current) playScatter();
     }
 
     if (total > 0) {
@@ -266,7 +271,7 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
       setLastWin(total);
       const msg = curFsNow > 0 ? 'Free Spins Active!' : (mult > 1 ? '2x Multiplier!' : '');
       showMessage('WIN ' + Math.floor(total), msg, 3000);
-      playWin();
+      if (soundOnRef.current) playWin();
       setExtBalance(prev => prev + total);
 
       // Particles
@@ -306,7 +311,7 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
 
   const changeBet = useCallback((dir) => {
     if (spinning) return;
-    playBetTick();
+    if (soundOnRef.current) playBetTick();
     setBet(prev => {
       let i = BETS.indexOf(prev);
       if (i === -1) i = BETS.indexOf(20);
@@ -317,15 +322,23 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
 
   const setBetMin = useCallback(() => {
     if (spinning) return;
-    playButton();
+    if (soundOnRef.current) playButton();
     setBet(BETS[0]);
   }, [spinning]);
 
   const setBetMax = useCallback(() => {
     if (spinning) return;
-    playButton();
+    if (soundOnRef.current) playButton();
     setBet(BETS[BETS.length - 1]);
   }, [spinning]);
+
+  const toggleSound = useCallback(() => {
+    setSoundOn(prev => {
+      const next = !prev;
+      try { localStorage.setItem('buffalo_sound', next ? 'on' : 'off'); } catch {}
+      return next;
+    });
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -428,7 +441,8 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
                   {spinning ? 'SPINNING...' : freeSpins > 0 ? 'FREE SPIN' : 'SPIN'}
                 </button>
                 <div style={{width:'8px'}}></div>
-                <button className="btn btn-info" id="paytableBtn" onClick={() => { playButton(); setShowPaytable(true); }}>i</button>
+                <button className={`btn btn-info ${soundOn ? '' : 'muted'}`} onClick={() => { if (soundOnRef.current) playButton(); toggleSound(); }} style={{minWidth:'40px'}}>♪</button>
+                <button className="btn btn-info" id="paytableBtn" onClick={() => { if (soundOnRef.current) playButton(); setShowPaytable(true); }}>i</button>
               </div>
             </div>
           </div>
