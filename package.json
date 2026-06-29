@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
+    "build": "vite build",
+    "postinstall": "chmod -R +x node_modules/.bin",
     "preview": "vite preview"
   },
   "dependencies": {
