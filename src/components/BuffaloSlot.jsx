@@ -26,14 +26,13 @@ const ANIMALS = ['B','E','W','C','L'];
 const CARDS = ['A','K','Q','J','T','N'];
 const SC = 'S';
 const ROWS = 4;
-const COLS = 5;
+const COLS = 4;
 
 const REEL_STRIPS = [
   ['A','K','B','Q','J','T','N','L','A','Q','K','J','W','T','N','A','K','Q','B','J','T','N','C','A','K','Q','J','T','N','E','A','K','Q','J','T','L','N','A','K','Q','J','T','N','A','K','W','Q','J','T','N','A','K','Q','B','J','T','N','C','A','K','Q','J','T','N','L','A','K','Q','J','T','N','A','K','Q','W','J','T','N','A','K','Q','J','T','N','E','A','K','Q','B','J','T','N','A','K','Q','J','T','L','N','A'],
   ['Q','J','B','K','T','N','A','L','Q','J','K','T','N','A','W','Q','J','K','T','N','A','C','Q','J','K','T','N','A','E','Q','J','B','K','T','N','A','L','Q','J','K','T','N','A','W','Q','J','K','T','N','A','C','Q','J','K','B','T','N','A','L','Q','J','K','T','N','A','W','Q','J','K','T','N','A','E','Q','J','K','T','N','A','L','Q','J','B','K','T','N','A','W','Q','J','K','T','N','A','C','Q','J','K','T','N'],
   ['K','T','B','Q','J','N','A','L','K','T','Q','J','N','A','W','K','T','Q','J','N','A','E','K','T','Q','B','J','N','A','C','K','T','Q','J','N','A','L','K','T','Q','J','N','A','W','K','T','Q','J','N','A','E','K','T','Q','B','J','N','A','C','K','T','Q','J','N','A','L','K','T','Q','J','N','A','W','K','T','Q','J','N','A','E','K','T','Q','J','B','N','A','C','K','T','Q','J','N','A','L','K','T','Q','J','N'],
-  ['J','N','B','K','T','A','Q','L','J','N','K','T','A','Q','W','J','N','K','T','A','Q','E','J','N','K','B','T','A','Q','C','J','N','K','T','A','Q','L','J','N','K','T','A','Q','W','J','N','K','T','A','Q','E','J','N','K','T','A','B','Q','C','J','N','K','T','A','Q','L','J','N','K','T','A','Q','W','J','N','K','T','A','Q','E','J','N','K','T','A','Q','B','C','J','N','K','T','A','Q','L','J','N','K','T','A'],
-  ['T','A','B','Q','J','N','K','L','T','A','Q','J','N','K','W','T','A','Q','J','N','K','E','T','A','Q','B','J','N','K','C','T','A','Q','J','N','K','L','T','A','Q','J','N','K','W','T','A','Q','J','N','K','E','T','A','Q','J','B','N','K','C','T','A','Q','J','N','K','L','T','A','Q','J','N','K','W','T','A','Q','J','N','K','E','T','A','Q','J','N','K','B','C','T','A','Q','J','N','K','L']
+  ['J','N','B','K','T','A','Q','L','J','N','K','T','A','Q','W','J','N','K','T','A','Q','E','J','N','K','B','T','A','Q','C','J','N','K','T','A','Q','L','J','N','K','T','A','Q','W','J','N','K','T','A','Q','E','J','N','K','T','A','B','Q','C','J','N','K','T','A','Q','L','J','N','K','T','A','Q','W','J','N','K','T','A','Q','E','J','N','K','T','A','Q','B','C','J','N','K','T','A','Q','L','J','N','K','T','A']
 ];
 
 const BETS = [1,2,5,10,15,20,25,30,40,50,75,100,150,200,300,500];
@@ -300,7 +299,7 @@ export default function BuffaloSlot({ balance: extBalance, setBalance: setExtBal
       try {
         const client = getSupabaseClient();
         if (client) {
-          await client.from('profiles').update({ balance: newBal }).eq('id', currentUser.id);
+          await client.rpc('update_balance', { user_id: currentUser.id, new_balance: newBal });
         }
       } catch(e) {}
     }

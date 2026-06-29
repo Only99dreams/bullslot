@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAdminData, approveTransaction, rejectTransaction } from '../services/supabase';
+import { getAdminData, approveTransaction, rejectTransaction, updateUserBalance } from '../services/supabase';
 
 export default function AdminPanel({ onClose }) {
   const [tab, setTab] = useState('deposits');
@@ -113,14 +113,42 @@ export default function AdminPanel({ onClose }) {
               <span style={{ flex: 2 }}>Email</span>
               <span style={{ flex: 1 }}>Balance</span>
               <span style={{ flex: 1 }}>Admin</span>
+              <span style={{ flex: 2 }}>Actions</span>
             </div>
             {data.users.map((u, i) => (
-              <div key={i} style={{ background: '#1e293b', borderRadius: '8px', padding: '10px 12px', display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+              <div key={i} style={{ background: '#1e293b', borderRadius: '8px', padding: '8px 12px', display: 'flex', alignItems: 'center', fontSize: '12px', gap: '4px' }}>
                 <span style={{ flex: 2, color: '#e2e8f0' }}>{u.username || '—'}</span>
-                <span style={{ flex: 2, color: '#94a3b8' }}>{u.email || '—'}</span>
+                <span style={{ flex: 2, color: '#94a3b8', fontSize: '11px' }}>{u.email || '—'}</span>
                 <span style={{ flex: 1, color: '#fbbf24' }}>${u.balance || 0}</span>
-                <span style={{ flex: 1, color: u.is_admin ? '#22c55e' : '#64748b' }}>
+                <span style={{ flex: 1, color: u.is_admin ? '#22c55e' : '#64748b', fontSize: '11px' }}>
                   {u.is_admin ? '✓' : '—'}
+                </span>
+                <span style={{ flex: 2, display: 'flex', gap: '4px', alignItems: 'center' }}>
+                  <input type="number" defaultValue="" placeholder="Amt" id={'bal-' + u.id}
+                    style={{ width: '60px', background: '#0f172a', border: '1px solid #334155', borderRadius: '4px', padding: '4px 6px', color: '#e2e8f0', fontSize: '11px', fontFamily: 'inherit', outline: 'none' }}
+                  />
+                  <button onClick={async () => {
+                    const inp = document.getElementById('bal-' + u.id);
+                    const amt = parseFloat(inp?.value);
+                    if (!amt || amt <= 0) return;
+                    const newBal = (u.balance || 0) + amt;
+                    await updateUserBalance(u.id, newBal);
+                    loadData();
+                  }}
+                    style={{ background: '#22c55e', border: 'none', borderRadius: '4px', padding: '4px 8px', color: '#fff', fontSize: '10px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                    +ADD
+                  </button>
+                  <button onClick={async () => {
+                    const inp = document.getElementById('bal-' + u.id);
+                    const amt = parseFloat(inp?.value);
+                    if (!amt || amt <= 0) return;
+                    const newBal = Math.max(0, (u.balance || 0) - amt);
+                    await updateUserBalance(u.id, newBal);
+                    loadData();
+                  }}
+                    style={{ background: '#ef4444', border: 'none', borderRadius: '4px', padding: '4px 8px', color: '#fff', fontSize: '10px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                    −SUB
+                  </button>
                 </span>
               </div>
             ))}

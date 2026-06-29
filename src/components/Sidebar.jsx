@@ -19,7 +19,7 @@ const NAV_SECTIONS = [
   ]},
 ];
 
-export default function Sidebar({ mobileOpen, onClose, currentUser, onShowAdmin, onShowDeposit, onShowWithdraw, onShowProfile, onShowAuth }) {
+export default function Sidebar({ mobileOpen, onClose, currentUser, isAdmin, onShowAdmin, onShowDeposit, onShowWithdraw, onShowProfile, onShowAuth }) {
   return (
     <>
       {mobileOpen && <div className="sidebar-overlay" onClick={onClose} />}
@@ -49,7 +49,7 @@ export default function Sidebar({ mobileOpen, onClose, currentUser, onShowAdmin,
           <button className="sidebar-action profile" onClick={onShowProfile}>
             <i className='bx bx-receipt'></i><span>My History</span>
           </button>
-          {currentUser && (
+          {currentUser && isAdmin && (
             <>
               <div className="nav-label" style={{marginTop:'6px'}}>Admin</div>
               <button className="sidebar-action admin" onClick={onShowAdmin} style={{display:'flex'}}>

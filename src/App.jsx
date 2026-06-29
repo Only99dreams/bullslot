@@ -11,7 +11,7 @@ import AdminPanel from './components/AdminPanel';
 import ProfileModal from './components/ProfileModal';
 
 function AppContent() {
-  const { supabaseConfigured, loading, currentUser } = useAuth();
+  const { supabaseConfigured, loading, currentUser, currentProfile } = useAuth();
   const [showConfig, setShowConfig] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [showDeposit, setShowDeposit] = useState(false);
@@ -69,6 +69,7 @@ function AppContent() {
         mobileOpen={mobileOpen}
         onClose={() => setMobileOpen(false)}
         currentUser={currentUser}
+        isAdmin={currentProfile?.is_admin}
         onShowAdmin={() => setShowAdmin(true)}
         onShowDeposit={() => {
           if (!currentUser) { if (!supabaseConfigured) setShowConfig(true); else setShowAuth(true); return; }
